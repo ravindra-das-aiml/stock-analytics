@@ -17,6 +17,7 @@ from app.api.ai import router as ai_router
 from app.api.websocket import router as ws_router
 from app.api.news import router as news_router
 from app.api.google_auth import router as google_router
+from app.api.notifications import router as notifications_router
 import app.models
 import time
 
@@ -32,30 +33,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="StockAI - Real-Time Stock Market Analytics",
-    description="""
-## StockAI API Documentation
-
-A professional real-time stock market analytics platform with AI predictions.
-
-### Features
-- **Live Stock Data** — Real-time prices from Alpha Vantage
-- **AI Predictions** — Price forecasting using Moving Average & Trend Analysis
-- **Portfolio Management** — Buy/Sell stocks, track P&L
-- **Price Alerts** — Get notified when target price is reached
-- **Risk Analysis** — Sharpe Ratio, Concentration Risk
-- **News Feed** — Latest market news with sentiment analysis
-- **WebSocket** — Real-time price streaming
-- **Google OAuth** — Sign in with Google
-
-### Authentication
-Use JWT Bearer token. Get token from `/api/v1/auth/login` endpoint.
-Or use Google OAuth from `/api/v1/auth/google` endpoint.
-    """,
+    description="Professional stock market analytics with AI predictions.",
     version="1.0.0",
-    contact={
-        "name": "Ravindra Das",
-        "url": "https://github.com/ravindra-das-aiml",
-    },
     lifespan=lifespan,
     docs_url=None,
     redoc_url=None,
@@ -78,8 +57,6 @@ async def add_security_headers(request: Request, call_next):
     response = await call_next(request)
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(round(process_time * 1000, 2)) + "ms"
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["X-Frame-Options"] = "DENY"
     return response
 
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Authentication"])
@@ -89,6 +66,7 @@ app.include_router(portfolio_router, prefix="/api/v1/portfolio", tags=["Portfoli
 app.include_router(alerts_router, prefix="/api/v1/alerts", tags=["Alerts"])
 app.include_router(ai_router, prefix="/api/v1/ai", tags=["AI & Predictions"])
 app.include_router(news_router, prefix="/api/v1/news", tags=["News"])
+app.include_router(notifications_router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(ws_router, tags=["WebSocket"])
 
 @app.get("/health", tags=["System"])
@@ -105,7 +83,6 @@ async def custom_swagger_ui():
             "displayRequestDuration": True,
             "filter": True,
             "syntaxHighlight.theme": "monokai",
-            "tryItOutEnabled": True,
         },
     )
 

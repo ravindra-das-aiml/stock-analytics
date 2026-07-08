@@ -5,6 +5,7 @@ import random
 from datetime import datetime, timedelta
 
 MOCK_STOCKS = {
+    # US Stocks
     "AAPL": {"name": "Apple Inc", "price": 283.78, "change": 8.63, "change_percent": "3.14%", "high": 285.95, "low": 274.21, "volume": 261775450},
     "TSLA": {"name": "Tesla Inc", "price": 379.71, "change": 4.61, "change_percent": "1.22%", "high": 387.8, "low": 368.6, "volume": 98234567},
     "MSFT": {"name": "Microsoft Corp", "price": 415.32, "change": -2.18, "change_percent": "-0.52%", "high": 419.50, "low": 412.10, "volume": 45678901},
@@ -12,9 +13,22 @@ MOCK_STOCKS = {
     "GOOGL": {"name": "Alphabet Inc", "price": 178.92, "change": 1.43, "change_percent": "0.81%", "high": 180.50, "low": 176.30, "volume": 34567890},
     "AMZN": {"name": "Amazon.com Inc", "price": 225.45, "change": -1.23, "change_percent": "-0.54%", "high": 228.90, "low": 223.10, "volume": 56789012},
     "META": {"name": "Meta Platforms", "price": 612.34, "change": 8.92, "change_percent": "1.48%", "high": 618.50, "low": 605.20, "volume": 23456789},
+    # Indian Stocks - NSE
     "RELIANCE.NS": {"name": "Reliance Industries", "price": 2987.45, "change": 45.30, "change_percent": "1.54%", "high": 3010.00, "low": 2965.00, "volume": 12345678},
-    "TCS.NS": {"name": "Tata Consultancy", "price": 3456.78, "change": -23.45, "change_percent": "-0.67%", "high": 3489.00, "low": 3440.00, "volume": 8765432},
+    "TCS.NS": {"name": "Tata Consultancy Services", "price": 3456.78, "change": -23.45, "change_percent": "-0.67%", "high": 3489.00, "low": 3440.00, "volume": 8765432},
     "INFY.NS": {"name": "Infosys Ltd", "price": 1567.89, "change": 12.34, "change_percent": "0.79%", "high": 1580.00, "low": 1555.00, "volume": 9876543},
+    "HDFCBANK.NS": {"name": "HDFC Bank Ltd", "price": 1678.90, "change": -8.45, "change_percent": "-0.50%", "high": 1695.00, "low": 1670.00, "volume": 7654321},
+    "WIPRO.NS": {"name": "Wipro Ltd", "price": 456.78, "change": 5.67, "change_percent": "1.26%", "high": 462.00, "low": 450.00, "volume": 6543210},
+    "ICICIBANK.NS": {"name": "ICICI Bank Ltd", "price": 1234.56, "change": 15.67, "change_percent": "1.28%", "high": 1245.00, "low": 1225.00, "volume": 8901234},
+    "BHARTIARTL.NS": {"name": "Bharti Airtel Ltd", "price": 1789.45, "change": 23.45, "change_percent": "1.33%", "high": 1800.00, "low": 1778.00, "volume": 5432109},
+    "TATAMOTORS.NS": {"name": "Tata Motors Ltd", "price": 987.65, "change": -12.34, "change_percent": "-1.23%", "high": 1005.00, "low": 982.00, "volume": 11234567},
+    "SBIN.NS": {"name": "State Bank of India", "price": 876.54, "change": 9.87, "change_percent": "1.14%", "high": 885.00, "low": 868.00, "volume": 15678901},
+    "BAJFINANCE.NS": {"name": "Bajaj Finance Ltd", "price": 7654.32, "change": -45.67, "change_percent": "-0.59%", "high": 7720.00, "low": 7630.00, "volume": 2345678},
+    "ADANIENT.NS": {"name": "Adani Enterprises", "price": 2345.67, "change": 34.56, "change_percent": "1.50%", "high": 2370.00, "low": 2320.00, "volume": 4567890},
+    "MARUTI.NS": {"name": "Maruti Suzuki India", "price": 12345.67, "change": 123.45, "change_percent": "1.01%", "high": 12450.00, "low": 12280.00, "volume": 1234567},
+    "SUNPHARMA.NS": {"name": "Sun Pharmaceutical", "price": 1678.90, "change": -8.90, "change_percent": "-0.53%", "high": 1695.00, "low": 1665.00, "volume": 3456789},
+    "ZOMATO.NS": {"name": "Zomato Ltd", "price": 234.56, "change": 5.67, "change_percent": "2.48%", "high": 238.00, "low": 229.00, "volume": 23456789},
+    "PAYTM.NS": {"name": "One97 Communications", "price": 456.78, "change": -12.34, "change_percent": "-2.63%", "high": 472.00, "low": 452.00, "volume": 12345678},
 }
 
 def generate_history(base_price: float):
@@ -33,7 +47,7 @@ def generate_history(base_price: float):
             "high": high_p,
             "low": low_p,
             "close": close_p,
-            "volume": random.randint(10000000, 300000000),
+            "volume": random.randint(1000000, 300000000),
         })
         price = close_p
     return data
@@ -116,7 +130,11 @@ class StockService:
         results = []
         for symbol, info in MOCK_STOCKS.items():
             if query.upper() in symbol or query.lower() in info["name"].lower():
-                results.append({"symbol": symbol, "name": info["name"]})
-        return results[:5]
+                results.append({
+                    "symbol": symbol,
+                    "name": info["name"],
+                    "type": "NSE" if ".NS" in symbol else "NYSE/NASDAQ",
+                })
+        return results[:8]
 
 stock_service = StockService()
