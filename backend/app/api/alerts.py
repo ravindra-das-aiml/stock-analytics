@@ -7,13 +7,14 @@ from app.models.alert import Alert
 from app.models.user import User
 from app.api.auth import get_current_user
 from app.services.stock_service import stock_service
+from app.services.email_service import send_alert_email
 
 router = APIRouter()
 
 class AlertRequest(BaseModel):
     symbol: str
     target_price: float
-    condition: str  # "above" ya "below"
+    condition: str
 
 @router.get("/")
 async def get_alerts(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -48,9 +49,11 @@ async def check_alerts(db: AsyncSession = Depends(get_db), current_user: User = 
         if alert.condition == "above" and current_price >= alert.target_price:
             triggered.append({"symbol": alert.symbol, "condition": "above", "target": alert.target_price, "current": current_price})
             alert.is_active = False
+            await send_alert_email(current_user.email, alert.symbol, "above", alert.target_price, current_price)
         elif alert.condition == "below" and current_price <= alert.target_price:
             triggered.append({"symbol": alert.symbol, "condition": "below", "target": alert.target_price, "current": current_price})
             alert.is_active = False
+            await send_alert_email(current_user.email, alert.symbol, "below", alert.target_price, current_price)
     await db.commit()
     return {"triggered": triggered, "total_active": len(alerts) - len(triggered)}
 
