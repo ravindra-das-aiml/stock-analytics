@@ -32,11 +32,10 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
 
 app = FastAPI(
-    title="StockAI - Real-Time Stock Market Analytics",
-    description="Professional stock market analytics with AI predictions.",
+    title="StockAI API",
     version="1.0.0",
     lifespan=lifespan,
-    docs_url=None,
+    docs_url="/docs",
     redoc_url=None,
 )
 
@@ -47,8 +46,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "DELETE"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.middleware("http")
@@ -64,38 +63,11 @@ app.include_router(google_router, prefix="/api/v1/auth", tags=["Google OAuth"])
 app.include_router(stocks_router, prefix="/api/v1/stocks", tags=["Stocks"])
 app.include_router(portfolio_router, prefix="/api/v1/portfolio", tags=["Portfolio"])
 app.include_router(alerts_router, prefix="/api/v1/alerts", tags=["Alerts"])
-app.include_router(ai_router, prefix="/api/v1/ai", tags=["AI & Predictions"])
+app.include_router(ai_router, prefix="/api/v1/ai", tags=["AI"])
 app.include_router(news_router, prefix="/api/v1/news", tags=["News"])
 app.include_router(notifications_router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(ws_router, tags=["WebSocket"])
 
-@app.get("/health", tags=["System"])
+@app.get("/health")
 async def health_check():
     return {"status": "ok", "app": "StockAI API", "version": "1.0.0"}
-
-@app.get("/api/docs", include_in_schema=False)
-async def custom_swagger_ui():
-    return get_swagger_ui_html(
-        openapi_url="/openapi.json",
-        title="StockAI API Docs",
-        swagger_ui_parameters={
-            "deepLinking": True,
-            "displayRequestDuration": True,
-            "filter": True,
-            "syntaxHighlight.theme": "monokai",
-        },
-    )
-
-def custom_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-    openapi_schema = get_openapi(
-        title="StockAI API",
-        version="1.0.0",
-        description=app.description,
-        routes=app.routes,
-    )
-    app.openapi_schema = openapi_schema
-    return app.openapi_schema
-
-app.openapi = custom_openapi

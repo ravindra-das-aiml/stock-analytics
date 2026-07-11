@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     ALPHA_VANTAGE_API_KEY: str = ""
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
-    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/v1/auth/google/callback"
+    GOOGLE_REDIRECT_URI: str = "http://localhost:8080/api/v1/auth/google/callback"
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 

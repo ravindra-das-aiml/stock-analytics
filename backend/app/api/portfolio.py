@@ -2,18 +2,22 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel
+
 from app.core.database import get_db
 from app.models.portfolio import Portfolio
+from app.models.transaction import Transaction
 from app.models.user import User
 from app.api.auth import get_current_user
 from app.services.stock_service import stock_service
 
 router = APIRouter()
 
+
 class BuyStockRequest(BaseModel):
     symbol: str
     quantity: float
     buy_price: float
+
 
 @router.get("/")
 async def get_portfolio(
@@ -24,21 +28,22 @@ async def get_portfolio(
         select(Portfolio).where(Portfolio.user_id == current_user.id)
     )
     holdings = result.scalars().all()
-    
+
     portfolio = []
     total_invested = 0
     total_current = 0
-    
+
     for h in holdings:
         stock = await stock_service.get_stock_info(h.symbol)
         current_price = stock["current_price"] if stock else h.buy_price
+
         invested = h.buy_price * h.quantity
         current_value = current_price * h.quantity
         profit_loss = current_value - invested
-        
+
         total_invested += invested
         total_current += current_value
-        
+
         portfolio.append({
             "id": h.id,
             "symbol": h.symbol,
@@ -50,13 +55,14 @@ async def get_portfolio(
             "profit_loss": round(profit_loss, 2),
             "profit_loss_percent": round((profit_loss / invested) * 100, 2),
         })
-    
+
     return {
         "holdings": portfolio,
         "total_invested": round(total_invested, 2),
         "total_current_value": round(total_current, 2),
         "total_profit_loss": round(total_current - total_invested, 2),
     }
+
 
 @router.post("/buy")
 async def buy_stock(
@@ -70,10 +76,28 @@ async def buy_stock(
         quantity=data.quantity,
         buy_price=data.buy_price,
     )
+
     db.add(holding)
+
+    transaction = Transaction(
+        user_id=current_user.id,
+        symbol=data.symbol.upper(),
+        transaction_type="BUY",
+        quantity=data.quantity,
+        price=data.buy_price,
+        total=data.quantity * data.buy_price,
+    )
+
+    db.add(transaction)
+
     await db.commit()
     await db.refresh(holding)
-    return {"message": f"{data.quantity} shares of {data.symbol} added!", "id": holding.id}
+
+    return {
+        "message": f"{data.quantity} shares of {data.symbol} added!",
+        "id": holding.id
+    }
+
 
 @router.delete("/{holding_id}")
 async def sell_stock(
@@ -87,10 +111,24 @@ async def sell_stock(
             Portfolio.user_id == current_user.id
         )
     )
+
     holding = result.scalar_one_or_none()
+
     if not holding:
         raise HTTPException(status_code=404, detail="Holding not found")
-    
+
+    transaction = Transaction(
+        user_id=current_user.id,
+        symbol=holding.symbol,
+        transaction_type="SELL",
+        quantity=holding.quantity,
+        price=holding.buy_price,
+        total=holding.quantity * holding.buy_price,
+    )
+
+    db.add(transaction)
+
     await db.delete(holding)
     await db.commit()
+
     return {"message": "Stock sold successfully"}

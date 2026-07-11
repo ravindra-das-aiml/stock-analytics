@@ -17,7 +17,7 @@ export function useStockWebSocket() {
 
   useEffect(() => {
     const connect = () => {
-      const ws = new WebSocket("ws://localhost:8000/ws/stocks");
+      const ws = new WebSocket("ws://localhost:8080/ws/stocks");
       wsRef.current = ws;
 
       ws.onopen = () => {
@@ -52,3 +52,4 @@ export function useStockWebSocket() {
 
   return { prices, connected };
 }
+
