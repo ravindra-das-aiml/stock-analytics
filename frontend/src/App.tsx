@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { stockAPI, portfolioAPI } from "./api";
 import { LoginPage } from "./LoginPage";
 import { LandingPage } from "./LandingPage";
