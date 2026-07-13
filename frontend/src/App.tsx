@@ -6,7 +6,7 @@ import { useStockWebSocket } from "./useWebSocket";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, ComposedChart, Scatter } from "recharts";
 import axios from "axios";
 
-const API = axios.create({ baseURL: "http://localhost:8080/api/v1" });
+const API = axios.create({ baseURL: "https://stock-analytics-production-2331.up.railway.app/api/v1" });
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -675,4 +675,5 @@ export default function App() {
   if (page === "login") return <LoginPage onLogin={() => setPage("dashboard")} />;
   return <Dashboard onLogout={() => { localStorage.removeItem("token"); setPage("landing"); }} />;
 }
+
 

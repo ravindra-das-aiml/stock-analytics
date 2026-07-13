@@ -1,7 +1,9 @@
-﻿import axios from "axios";
+import axios from "axios";
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8080";
 
 const API = axios.create({
-  baseURL: "http://localhost:8080/api/v1",
+  baseURL: `${BACKEND_URL}/api/v1`,
 });
 
 API.interceptors.request.use((config) => {
@@ -33,9 +35,6 @@ export const portfolioAPI = {
   getPortfolio: () => API.get("/portfolio/"),
   buyStock: (data: any) => API.post("/portfolio/buy", data),
   sellStock: (id: number) => API.delete(`/portfolio/${id}`),
-};
-export const transactionAPI = {
-  getTransactions: () => API.get("/transactions/"),
 };
 
 export default API;
