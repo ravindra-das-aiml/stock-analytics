@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { authAPI } from "./api";
 
 export function LoginPage({ onLogin }: { onLogin: () => void }) {
