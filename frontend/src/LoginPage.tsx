@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { authAPI } from "./api";
 
 export function LoginPage({ onLogin }: { onLogin: () => void }) {
@@ -45,7 +45,7 @@ export function LoginPage({ onLogin }: { onLogin: () => void }) {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "https://stock-analytics-production-2331.up.railway.app/api/v1/auth/google";
+    window.location.href = "https://stock-analytics-production-3827.up.railway.app/api/v1/auth/google";
   };
 
   return (
@@ -288,4 +288,5 @@ export function LoginPage({ onLogin }: { onLogin: () => void }) {
     </>
   );
 }
+
 

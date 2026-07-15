@@ -1,6 +1,6 @@
-import axios from "axios";
+﻿import axios from "axios";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://stock-analytics-production-2331.up.railway.app";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://stock-analytics-production-3827.up.railway.app";
 
 const API = axios.create({
   baseURL: `${BACKEND_URL}/api/v1`,
@@ -42,3 +42,4 @@ export const transactionAPI = {
 };
 
 export default API;
+
