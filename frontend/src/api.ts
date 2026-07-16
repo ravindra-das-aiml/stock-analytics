@@ -1,6 +1,6 @@
-﻿import axios from "axios";
+import axios from "axios";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://stock-analytics-production-3827.up.railway.app";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8080";
 
 const API = axios.create({
   baseURL: `${BACKEND_URL}/api/v1`,
@@ -26,7 +26,8 @@ export const authAPI = {
 
 export const stockAPI = {
   getStock: (symbol: string) => API.get(`/stocks/${symbol}`),
-  getHistory: (symbol: string, period: string = "1mo") => API.get(`/stocks/${symbol}/history?period=${period}`),
+  getHistory: (symbol: string, period: string = "1mo") =>
+    API.get(`/stocks/${symbol}/history?period=${period}`),
   search: (q: string) => API.get(`/stocks/search?q=${q}`),
 };
 
@@ -36,10 +37,4 @@ export const portfolioAPI = {
   sellStock: (id: number) => API.delete(`/portfolio/${id}`),
 };
 
-// YAHAN MISTAKE THI, ISKO HUMNE ADD KAR DIYA HAI
-export const transactionAPI = {
-  getHistory: () => API.get("/transactions/"), 
-};
-
 export default API;
-
