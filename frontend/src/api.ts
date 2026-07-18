@@ -1,6 +1,6 @@
-import axios from "axios";
+﻿import axios from "axios";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8080";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://stock-analytics-20si.onrender.com";
 
 const API = axios.create({
   baseURL: `${BACKEND_URL}/api/v1`,
@@ -38,3 +38,4 @@ export const portfolioAPI = {
 };
 
 export default API;
+
