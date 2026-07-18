@@ -69,5 +69,11 @@ app.include_router(notifications_router, prefix="/api/v1/notifications", tags=["
 app.include_router(ws_router, tags=["WebSocket"])
 
 @app.get("/health")
+@app.get("/")
+async def root_home():
+    return {
+        "status": "Server is running successfully!",
+        "message": "Welcome to StockAI API. Please visit /docs to view and test the API endpoints."
+    }
 async def health_check():
     return {"status": "ok", "app": "StockAI API", "version": "1.0.0"}
